@@ -25,11 +25,18 @@ interface IHouse {
     comeIn(person: Person): void;
 }
 
-class MyHouse implements IHouse {
-     private key: Key;
+abstract class House implements IHouse {
+    protected door: boolean; 
+    constructor(protected key: Key) {} 
+    abstract openDoor(person: Person): void; 
+    comeIn(person: Person): void {
+        console.log(`${person.getName()} is coming in the house`);
+    }
+}
 
+class MyHouse extends House { 
     constructor(key: Key) {
-        this.key = key;
+        super(key); 
     }
 
     openDoor(person: Person): void {
@@ -39,15 +46,12 @@ class MyHouse implements IHouse {
             console.log("Invalid key. Access denied.");
         }
     }
-
-    comeIn(person: Person): void {
-        console.log(`${person.getName()} is coming in the house`);
-    }
 }
 
 const key = new Key();
-const person = new Person(key);
+const person = new Person(key); 
 const house = new MyHouse(key);
 
 house.openDoor(person);
 house.comeIn(person);
+
