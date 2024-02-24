@@ -1,10 +1,10 @@
 class Key {
-    private key: number;
+    private signature: number;
     constructor() {
-        this.key = Math.random();
+        this.signature = Math.random();
     }
     getKey(): number {
-        return this.key;
+        return this.signature;
     }
 }
 
@@ -15,22 +15,29 @@ class Person {
         return this.name ?? "No name";
     }
 
-    getKey(): number {
-        return this.key.getKey();
+    getKey(): Key {
+        return this.key;
     }
 }
 
 interface IHouse {
-    openDoor(person: Person): void;
+    openDoor(key: Key): void;
     comeIn(person: Person): void;
 }
 
 abstract class House implements IHouse {
     protected door: boolean; 
+    protected tenants: Person[] = [];
     constructor(protected key: Key) {} 
-    abstract openDoor(person: Person): void; 
+    abstract openDoor(key: Key): void; 
     comeIn(person: Person): void {
-        console.log(`${person.getName()} is coming in the house`);
+        if (this.door) {
+            this.tenants.push(person)
+            console.log(`${person.getName()} is coming in the house`);
+        } else {
+            console.log("The door is closed. You can't come in.");
+        }
+        
     }
 }
 
@@ -39,9 +46,10 @@ class MyHouse extends House {
         super(key); 
     }
 
-    openDoor(person: Person): void {
-        if (person.getKey() === this.key.getKey()) {
-            console.log(`${person.getName()} is opening the door`);
+    openDoor(key: Key): void {
+        if (key.getKey() === this.key.getKey()) {
+            this.door = true;
+            console.log("The door is opened");
         } else {
             console.log("Invalid key. Access denied.");
         }
@@ -52,6 +60,6 @@ const key = new Key();
 const person = new Person(key); 
 const house = new MyHouse(key);
 
-house.openDoor(person);
+house.openDoor(person.getKey());
 house.comeIn(person);
 
